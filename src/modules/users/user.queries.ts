@@ -51,3 +51,9 @@ export async function listUsers(em: EntityManager, pagination: Pagination) {
   );
   return paginated(users.map(toUserView), total, pagination);
 }
+
+/** Unpaginated — fine for small tables / admin views; prefer `listUsers` for APIs. */
+export async function findAllUsers(em: EntityManager) {
+  const users = await em.find(UserSchema, {}, { orderBy: { createdAt: "desc" } });
+  return users.map(toUserView);
+}

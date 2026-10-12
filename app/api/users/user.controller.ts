@@ -3,8 +3,8 @@ import { requireAuth } from "@/src/modules/auth/auth.guard";
 import { parseJson, parseQuery, uuidParam, type HandlerContext } from "@/src/lib/http";
 import { paginationSchema } from "@/src/lib/pagination";
 import { SESSION_COOKIE } from "@/src/lib/session";
-import { updateUserSchema } from "./user.schemas";
-import * as userService from "./user.service";
+import { updateUserSchema } from "@/src/modules/users/user.schemas";
+import * as userService from "@/src/modules/users/user.service";
 
 export async function list(req: NextRequest, { em }: HandlerContext) {
   return Response.json(await userService.listUsers(em, parseQuery(req, paginationSchema)));

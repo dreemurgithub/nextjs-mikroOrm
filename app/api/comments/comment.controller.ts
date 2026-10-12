@@ -2,8 +2,8 @@ import type { NextRequest } from "next/server";
 import { parseJson, parseQuery, uuidParam, type HandlerContext } from "@/src/lib/http";
 import { paginationSchema } from "@/src/lib/pagination";
 import { requireAuth } from "@/src/modules/auth/auth.guard";
-import { createCommentSchema, updateCommentSchema } from "./comment.schemas";
-import * as commentService from "./comment.service";
+import { createCommentSchema, updateCommentSchema } from "@/src/modules/comments/comment.schemas";
+import * as commentService from "@/src/modules/comments/comment.service";
 
 type IdParams = HandlerContext<{ id: string }>;
 

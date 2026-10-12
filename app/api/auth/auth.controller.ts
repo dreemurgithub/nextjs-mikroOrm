@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { parseJson, type HandlerContext } from "@/src/lib/http";
 import { SESSION_COOKIE, sessionCookie } from "@/src/lib/session";
-import { requireAuth } from "./auth.guard";
-import { loginSchema, registerSchema } from "./auth.schemas";
-import * as authService from "./auth.service";
+import { requireAuth } from "@/src/modules/auth/auth.guard";
+import { loginSchema, registerSchema } from "@/src/modules/auth/auth.schemas";
+import * as authService from "@/src/modules/auth/auth.service";
 
 /** Sets the httpOnly session cookie and also returns the token for non-browser clients (Bearer). */
 function withSession(body: { user: unknown; token: string }, status = 200) {

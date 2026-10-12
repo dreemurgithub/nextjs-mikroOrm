@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 import { parseJson, parseQuery, uuidParam, type HandlerContext } from "@/src/lib/http";
 import { requireAuth } from "@/src/modules/auth/auth.guard";
-import { createPostSchema, listPostsQuerySchema, updatePostSchema } from "./post.schemas";
-import * as postService from "./post.service";
+import { createPostSchema, listPostsQuerySchema, updatePostSchema } from "@/src/modules/posts/post.schemas";
+import * as postService from "@/src/modules/posts/post.service";
 
 type IdParams = HandlerContext<{ id: string }>;
 
