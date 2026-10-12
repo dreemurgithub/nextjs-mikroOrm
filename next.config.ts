@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // MikroORM relies on dynamic imports/reflection; keep it out of the server bundle.
+  serverExternalPackages: ["@mikro-orm/core", "@mikro-orm/postgresql", "@mikro-orm/sql", "@mikro-orm/migrations", "@mikro-orm/seeder"],
   experimental: {
     agentFeedback: true,
   },
