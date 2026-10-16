@@ -30,9 +30,12 @@ export async function updateComment(em: EntityManager, actor: UserView, id: stri
   return getComment(em, id);
 }
 
+/** Returns the deleted comment (as it was), so callers know which post it belonged to. */
 export async function deleteComment(em: EntityManager, actor: UserView, id: string) {
-  assertOwner(await getComment(em, id), actor);
+  const comment = await getComment(em, id);
+  assertOwner(comment, actor);
   await commands.softDeleteComment(em, id);
+  return comment;
 }
 
 export async function restoreComment(em: EntityManager, actor: UserView, id: string) {

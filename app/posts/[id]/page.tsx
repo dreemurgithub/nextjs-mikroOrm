@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
 import { Suspense } from "react";
-import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
-import { listCommentsByPost } from "@/src/modules/comments/comment.queries";
-import { findPostById } from "@/src/modules/posts/post.queries";
+import { getCachedPostComments } from "@/src/modules/comments/comment.cache";
+import { getCachedPost } from "@/src/modules/posts/post.cache";
 
 export default function PostDetailPage({ params }: PageProps<"/posts/[id]">) {
   return (
@@ -25,12 +23,10 @@ async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
   // Postgres rejects malformed uuids, so treat them as "not found" before hitting the DB.
   if (!uuidParam.safeParse(id).success) notFound();
 
-  // Always read fresh from the DB at request time, never at build time.
-  await connection();
-  const em = await getEm();
-  const post = await findPostById(em, id);
+  // Both served from the disk cache; refreshed hourly or when a write expires their tags.
+  const post = await getCachedPost(id);
   if (!post) notFound();
-  const comments = await listCommentsByPost(em, post.id, { page: 1, pageSize: 100 });
+  const comments = await getCachedPostComments(post.id);
 
   return (
     <article>

@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { connection } from "next/server";
 import { Suspense } from "react";
-import { getEm } from "@/src/db/orm";
-import { findAllPosts } from "@/src/modules/posts/post.queries";
+import { getCachedPosts } from "@/src/modules/posts/post.cache";
 
 export default function PostsPage() {
   return (
@@ -16,9 +14,8 @@ export default function PostsPage() {
 }
 
 async function PostList() {
-  // Always read fresh from the DB at request time, never at build time.
-  await connection();
-  const posts = await findAllPosts(await getEm());
+  // Served from the disk cache; refreshed hourly or when a write expires the `posts` tag.
+  const posts = await getCachedPosts();
 
   if (posts.length === 0) return <p className="text-zinc-500">No posts yet.</p>;
 

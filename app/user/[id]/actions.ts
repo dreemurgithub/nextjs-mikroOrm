@@ -4,6 +4,7 @@ import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
+import { postCacheTags } from "@/src/modules/posts/post.cache";
 import { userCacheTags } from "@/src/modules/users/user.cache";
 import * as userService from "@/src/modules/users/user.service";
 
@@ -16,5 +17,6 @@ export async function softDeleteUserAction(id: string) {
   // is re-read from the DB instead of still showing the deleted user.
   updateTag(userCacheTags.list);
   updateTag(userCacheTags.detail(userId));
+  updateTag(postCacheTags.all); // their posts/comments were soft deleted too
   redirect("/user");
 }

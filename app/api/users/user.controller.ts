@@ -4,6 +4,7 @@ import { requireAuth } from "@/src/modules/auth/auth.guard";
 import { parseJson, parseQuery, uuidParam, type HandlerContext } from "@/src/lib/http";
 import { paginationSchema } from "@/src/lib/pagination";
 import { SESSION_COOKIE } from "@/src/lib/session";
+import { postCacheTags } from "@/src/modules/posts/post.cache";
 import { userCacheTags } from "@/src/modules/users/user.cache";
 import { updateUserSchema } from "@/src/modules/users/user.schemas";
 import * as userService from "@/src/modules/users/user.service";
@@ -15,6 +16,8 @@ import * as userService from "@/src/modules/users/user.service";
 function expireUserCache(userId: string) {
   revalidateTag(userCacheTags.list, { expire: 0 });
   revalidateTag(userCacheTags.detail(userId), { expire: 0 });
+  // Posts/comments show the author's name and are cascaded on delete: drop all of them.
+  revalidateTag(postCacheTags.all, { expire: 0 });
 }
 
 export async function list(req: NextRequest, { em }: HandlerContext) {

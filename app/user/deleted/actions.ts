@@ -3,6 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
+import { postCacheTags } from "@/src/modules/posts/post.cache";
 import { userCacheTags } from "@/src/modules/users/user.cache";
 import * as userService from "@/src/modules/users/user.service";
 
@@ -14,6 +15,7 @@ export async function restoreUserAction(id: string) {
   // `/user` and `/user/[id]` are cached: expire their entries (the detail one held a cached 404).
   updateTag(userCacheTags.list);
   updateTag(userCacheTags.detail(userId));
+  updateTag(postCacheTags.all); // their posts/comments came back too
   // `/user/deleted` is not cached (read at request time), it only needs a re-render.
   revalidatePath("/user/deleted");
 }
