@@ -71,3 +71,10 @@ export async function listPosts(em: EntityManager, filter: PostListFilter) {
   const counts = await countComments(em, posts.map((p) => p.id));
   return paginated(posts.map((p) => toPostView(p, counts.get(p.id) ?? 0)), total, filter);
 }
+
+/** Unpaginated — fine for small tables / page views; prefer `listPosts` for APIs. */
+export async function findAllPosts(em: EntityManager) {
+  const posts = await em.find(PostSchema, {}, { populate: ["author"], orderBy: { createdAt: "desc" } });
+  const counts = await countComments(em, posts.map((p) => p.id));
+  return posts.map((p) => toPostView(p, counts.get(p.id) ?? 0));
+}

@@ -9,6 +9,8 @@ const seedUsers = [
   { email: "admin@example.com", name: "Admin" },
   { email: "alice@example.com", name: "Alice" },
   { email: "bob@example.com", name: "Bob" },
+  { email: "carol@example.com", name: "Carol" },
+  { email: "dave@example.com", name: "Dave" },
 ];
 
 /** Idempotent: skips users whose email already exists (including soft-deleted ones). */
