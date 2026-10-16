@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
 import { findUserById } from "@/src/modules/users/user.queries";
+import { DeleteUserButton } from "./delete-user-button";
 
 export default function UserDetailPage({ params }: PageProps<"/user/[id]">) {
   return (
@@ -39,6 +40,7 @@ async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
         <dt className="text-zinc-500">Updated</dt>
         <dd>{user.updatedAt.toISOString().slice(0, 10)}</dd>
       </dl>
+      <DeleteUserButton id={user.id} name={user.name} />
     </>
   );
 }

@@ -57,3 +57,13 @@ export async function findAllUsers(em: EntityManager) {
   const users = await em.find(UserSchema, {}, { orderBy: { createdAt: "desc" } });
   return users.map(toUserView);
 }
+
+/** Soft-deleted users only (the trash), most recently deleted first. */
+export async function findDeletedUsers(em: EntityManager) {
+  const users = await em.find(
+    UserSchema,
+    { deletedAt: { $ne: null } },
+    { filters: { softDelete: false }, orderBy: { deletedAt: "desc" } },
+  );
+  return users.map(toUserView);
+}

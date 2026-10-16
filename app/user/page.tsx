@@ -7,7 +7,12 @@ import { findAllUsers } from "@/src/modules/users/user.queries";
 export default function UsersPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12">
-      <h1 className="mb-6 text-2xl font-semibold">Users</h1>
+      <div className="mb-6 flex items-baseline justify-between">
+        <h1 className="text-2xl font-semibold">Users</h1>
+        <Link href="/user/deleted" className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
+          Deleted users →
+        </Link>
+      </div>
       <Suspense fallback={<p className="text-zinc-500">Loading users…</p>}>
         <UserList />
       </Suspense>

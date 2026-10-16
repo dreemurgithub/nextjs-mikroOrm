@@ -23,3 +23,8 @@ export async function deleteAccount(em: EntityManager, userId: string) {
   await getUser(em, userId);
   await commands.softDeleteUser(em, userId);
 }
+
+export async function restoreAccount(em: EntityManager, userId: string) {
+  await commands.restoreUser(em, userId);
+  return getUser(em, userId);
+}
