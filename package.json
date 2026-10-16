@@ -17,6 +17,7 @@
     "migration:revert": "mikro-orm migration:down",
     "migration:status": "mikro-orm migration:list && mikro-orm migration:pending",
     "seed": "mikro-orm seeder:run",
+    "seed:static": "mikro-orm seeder:run --class=StaticSeeder",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
