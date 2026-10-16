@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { getEm } from "@/src/db/orm";
@@ -32,10 +33,26 @@ async function UserList() {
       </thead>
       <tbody>
         {users.map((user) => (
-          <tr key={user.id} className="border-b border-zinc-100 dark:border-zinc-900">
-            <td className="py-2 pr-4">{user.name}</td>
-            <td className="py-2 pr-4 font-mono text-zinc-600 dark:text-zinc-400">{user.email}</td>
-            <td className="py-2">{user.createdAt.toISOString().slice(0, 10)}</td>
+          <tr
+            key={user.id}
+            className="border-b border-zinc-100 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900"
+          >
+            {/* A link per cell makes the whole row clickable without a client component. */}
+            <td>
+              <Link href={`/user/${user.id}`} className="block py-2 pr-4">
+                {user.name}
+              </Link>
+            </td>
+            <td>
+              <Link href={`/user/${user.id}`} tabIndex={-1} className="block py-2 pr-4 font-mono text-zinc-600 dark:text-zinc-400">
+                {user.email}
+              </Link>
+            </td>
+            <td>
+              <Link href={`/user/${user.id}`} tabIndex={-1} className="block py-2">
+                {user.createdAt.toISOString().slice(0, 10)}
+              </Link>
+            </td>
           </tr>
         ))}
       </tbody>
