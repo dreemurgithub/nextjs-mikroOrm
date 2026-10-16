@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
@@ -24,6 +25,8 @@ async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
   // Postgres rejects malformed uuids, so treat them as "not found" before hitting the DB.
   if (!uuidParam.safeParse(id).success) notFound();
 
+  // Always read fresh from the DB at request time, never at build time.
+  await connection();
   const user = await findUserById(await getEm(), id);
   if (!user) notFound();
 
