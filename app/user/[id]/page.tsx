@@ -4,8 +4,18 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
-import { findUserById } from "@/src/modules/users/user.queries";
+import { findAllUserIds, findUserById } from "@/src/modules/users/user.queries";
 import { DeleteUserButton } from "./delete-user-button";
+
+// With Cache Components an empty array is a build error, so fall back to a placeholder
+// (the nil uuid) on an empty DB: it still prerenders the static shell and 404s at request time.
+const PLACEHOLDER_ID = "00000000-0000-0000-0000-000000000000";
+
+/** Prerender the static shell of every existing user at build time; new ids render on first visit. */
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  const ids = await findAllUserIds(await getEm());
+  return (ids.length > 0 ? ids : [PLACEHOLDER_ID]).map((id) => ({ id }));
+}
 
 export default function UserDetailPage({ params }: PageProps<"/user/[id]">) {
   return (

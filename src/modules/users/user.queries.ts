@@ -67,3 +67,9 @@ export async function findDeletedUsers(em: EntityManager) {
   );
   return users.map(toUserView);
 }
+
+/** Ids of every live user — used by `generateStaticParams` to prerender `/user/[id]` at build time. */
+export async function findAllUserIds(em: EntityManager): Promise<string[]> {
+  const users = await em.find(UserSchema, {}, { fields: ["id"], orderBy: { createdAt: "desc" } });
+  return users.map((u) => u.id);
+}
