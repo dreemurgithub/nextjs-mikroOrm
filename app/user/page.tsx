@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { connection } from "next/server";
 import { Suspense } from "react";
-import { getEm } from "@/src/db/orm";
-import { findAllUsers } from "@/src/modules/users/user.queries";
+import { getCachedUsers } from "@/src/modules/users/user.cache";
 
 export default function UsersPage() {
   return (
@@ -21,9 +19,9 @@ export default function UsersPage() {
 }
 
 async function UserList() {
-  // Always read fresh from the DB at request time, never at build time.
-  await connection();
-  const users = await findAllUsers(await getEm());
+  // Served from the "use cache" entry: filled from the DB at build time (so the list is part of
+  // the prerendered HTML), refreshed only when a user write invalidates the "users" tag.
+  const users = await getCachedUsers();
 
   if (users.length === 0) return <p className="text-zinc-500">No users yet.</p>;
 

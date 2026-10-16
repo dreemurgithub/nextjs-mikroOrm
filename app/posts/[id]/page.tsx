@@ -5,17 +5,7 @@ import { Suspense } from "react";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
 import { listCommentsByPost } from "@/src/modules/comments/comment.queries";
-import { findAllPostIds, findPostById } from "@/src/modules/posts/post.queries";
-
-// With Cache Components an empty array is a build error, so fall back to a placeholder
-// (the nil uuid) on an empty DB: it still prerenders the static shell and 404s at request time.
-const PLACEHOLDER_ID = "00000000-0000-0000-0000-000000000000";
-
-/** Prerender the static shell of every existing post at build time; new ids render on first visit. */
-export async function generateStaticParams(): Promise<{ id: string }[]> {
-  const ids = await findAllPostIds(await getEm());
-  return (ids.length > 0 ? ids : [PLACEHOLDER_ID]).map((id) => ({ id }));
-}
+import { findPostById } from "@/src/modules/posts/post.queries";
 
 export default function PostDetailPage({ params }: PageProps<"/posts/[id]">) {
   return (

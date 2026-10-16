@@ -79,8 +79,3 @@ export async function findAllPosts(em: EntityManager) {
   return posts.map((p) => toPostView(p, counts.get(p.id) ?? 0));
 }
 
-/** Ids of every live post — used by `generateStaticParams` to prerender `/posts/[id]` at build time. */
-export async function findAllPostIds(em: EntityManager): Promise<string[]> {
-  const posts = await em.find(PostSchema, {}, { fields: ["id"], orderBy: { createdAt: "desc" } });
-  return posts.map((p) => p.id);
-}

@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
 import { Suspense } from "react";
 import { getEm } from "@/src/db/orm";
 import { uuidParam } from "@/src/lib/http";
-import { findAllUserIds, findUserById } from "@/src/modules/users/user.queries";
+import { getCachedUser } from "@/src/modules/users/user.cache";
+import { findAllUserIds } from "@/src/modules/users/user.queries";
 import { DeleteUserButton } from "./delete-user-button";
 
 // With Cache Components an empty array is a build error, so fall back to a placeholder
-// (the nil uuid) on an empty DB: it still prerenders the static shell and 404s at request time.
+// (the nil uuid) on an empty DB: it still prerenders and simply 404s.
 const PLACEHOLDER_ID = "00000000-0000-0000-0000-000000000000";
 
-/** Prerender the static shell of every existing user at build time; new ids render on first visit. */
+/**
+ * Prerender every existing user at build time. Because `UserDetail` reads through the cache
+ * (no `connection()`), the user's data is baked into the build output, not just the shell.
+ * Ids created after the build render on first visit, then are served from the cache.
+ */
 export async function generateStaticParams(): Promise<{ id: string }[]> {
   const ids = await findAllUserIds(await getEm());
   return (ids.length > 0 ? ids : [PLACEHOLDER_ID]).map((id) => ({ id }));
@@ -35,9 +39,8 @@ async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
   // Postgres rejects malformed uuids, so treat them as "not found" before hitting the DB.
   if (!uuidParam.safeParse(id).success) notFound();
 
-  // Always read fresh from the DB at request time, never at build time.
-  await connection();
-  const user = await findUserById(await getEm(), id);
+  // Served from the "use cache" entry for this id; refreshed when a write invalidates `user:<id>`.
+  const user = await getCachedUser(id);
   if (!user) notFound();
 
   return (
